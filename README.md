@@ -112,7 +112,6 @@ Usage template:\
         ```md
         {% webp /post_image/abc.JPG --mo200x200-50x50 %}
         ```
-        Consider people will need blur out multiple sections, multiple mosaics may be developed. 
 
     - --ratio[width]:[height]\
         The most quick and dirty image cropping function to crop to certain ratio.
