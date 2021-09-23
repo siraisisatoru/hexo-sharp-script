@@ -51,21 +51,26 @@ Usage template:\
         ```md
         {% webp original /post_image/abc.JPG %}
         ```
+
     - fancybox\
         In some themes, fancybox is used. This script normally return html code with image tag with class of `nofancybox`. This option allows to escape from the assumption.
         ```md
         {% webp fancybox /post_image/abc.JPG %}
         ```
+        Go to the note section for escaping the fancybox function.
+
     - nwatermk\
         If you don't want to add watermark to the image, add this option to the tag.
         ```md
         {% webp nwatermk /post_image/abc.JPG %}
         ```
+
     - ncompress\
         Sometimes, the result image being pixelate when resizing the image. The final image maybe so blurry and invisible. This option allows to skip the compression close the end of the process.
         ```md
         {% webp ncompress /post_image/abc.JPG %}
         ```
+
 - link (compulsory)\
     The link is the main separation between optional options and image operators.
     Since images maybe used in multiple posts, single image will be used as source. If all options are the same, then the image will be generated once only.
@@ -82,7 +87,6 @@ Usage template:\
 │   │   └── ghi.PNG
 └── ...
 ```
-
 
 - post-options (optional)
     - --refmaxwidth[co-responding ratio]\
@@ -135,6 +139,7 @@ Notice that there may have billions of combination of options. There are fundame
 ## Notes
 - Images will only be process if and only if `webp` tag is used in .md file or `webp_helper` tag used in .ejs file which is different from most of other hexo image plugins.
 - The processed images will be stored in `image` folder under the root directory of the project.
+- I am using [orange theme](https://github.com/zchengsite/hexo-theme-oranges) for HEXO blog development. The fancybox function is implemented by using Jquery to add a perent `a` tag with `data-fancybox='gallery'` and corresponding `href` to the image. When looping all elements, a filter `if ($(this).hasClass("nofancybox")) {return;}` can be used to escape the `a` tag addition.
 
 ## Use in ejs template
 It is the same usage as the use in markdown. But the tag curly bracket to square bracket.
