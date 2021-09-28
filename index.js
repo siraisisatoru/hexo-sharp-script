@@ -311,18 +311,24 @@ async function ImageWatermark(picConfigP = []) {
       ensure the files has been generated and then read into the stream
       then set to the buffer
       */
+      
       if (!hexo.route.list().includes(picJpg.replace("/", ""))) {
         hexo.route.set(picJpg.replace("/", ""), GetImageCache(picJpg));
-      }
-      if (!fs.pathExistsSync("public" + picJpg)) {
-        fs.copySync("image" + picJpg, "public" + picJpg);
       }
 
       if (!hexo.route.list().includes(picWebp.replace("/", ""))) {
         hexo.route.set(picWebp.replace("/", ""), GetImageCache(picWebp));
       }
-      if (!fs.pathExistsSync("public" + picWebp)) {
-        fs.copySync("image" + picWebp, "public" + picWebp);
+
+      if (/^(g)/.test(hexo.env.cmd)) {
+        // only copy files when the image 
+        if (!fs.pathExistsSync("public" + picJpg)) {
+          fs.copySync("image" + picJpg, "public" + picJpg);
+        }
+
+        if (!fs.pathExistsSync("public" + picWebp)) {
+          fs.copySync("image" + picWebp, "public" + picWebp);
+        }
       }
     };
 
