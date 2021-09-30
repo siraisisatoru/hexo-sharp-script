@@ -154,5 +154,5 @@ In ejs template:
 ```
 
 ## Right of usage
-The watermark library does not mentions any licence allocated to their project.
+The watermark library is using LGPL-3.0 licence for their project.
 MIT license is applied for this repository.
