@@ -328,13 +328,13 @@ async function ImageWatermark(picConfigP = []) {
 
     if (picConfigP) {
       localPicPro(picConfigP);
-      if (IsEqual(picConfigP[1])) { plist.push(picConfigP[1]); }
-      if (IsEqual(picConfigP[2])) { plist.push(picConfigP[2]); }
+      if (IsEqual(picConfigP[1])&&!plist.includes(picConfigP[1])) { plist.push(picConfigP[1]); }
+      if (IsEqual(picConfigP[2])&&!plist.includes(picConfigP[2])) { plist.push(picConfigP[2]); }
     } else if (picList.length) {
       picList.forEach((picConfig) => {
         localPicPro(picConfig);
-        if (IsEqual(picConfig[1])) { plist.push(picConfig[1]); }
-        if (IsEqual(picConfig[2])) { plist.push(picConfig[2]); }
+        if (IsEqual(picConfig[1])&&!plist.includes(picConfig[1])) { plist.push(picConfig[1]); }
+        if (IsEqual(picConfig[2])&&!plist.includes(picConfig[2])) { plist.push(picConfig[2]); }
       });
     }
 
