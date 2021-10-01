@@ -1,7 +1,8 @@
 /**
  * Created by SpiritLing
  * github: https://github.com/SpiritLing
- * web: https://blog.spiritling.cn
+ * Modified by SiraisiSatoru
+ * github: https://github.com/siraisisatoru
  */
 
 "use strict";
@@ -257,11 +258,11 @@ function filterDuplicateLists(picList) {
 
 async function ImageWatermark(picConfigP = []) {
   try {
-    const route = hexo.route;
     const options = defaultOptions;
     var picList = filterDuplicateLists(hexo.locals.get("picList"));
+    var plist = hexo.locals.get("enhancePicList");
 
-    let watermarkBuffer = await utils.GetWatermarkImageBuffer(route.list(), options.watermarkImage, route);
+    let watermarkBuffer = await utils.GetWatermarkImageBuffer(hexo.route.list(), options.watermarkImage, hexo.route);
 
     const localPicPro = async (picConfig) => {
       const filePath = picConfig[0][0];
@@ -272,7 +273,7 @@ async function ImageWatermark(picConfigP = []) {
 
       // webp
       if (!IsEqual(picWebp)) {
-        const stream = route.get(filePath);
+        const stream = hexo.route.get(filePath);
         const arr = [];
         stream.on("data", (chunk) => arr.push(chunk));
         console.log(`\x1b[40;94mINFO\x1b[0m  \x1b[40;94mGenerated Image Process: \x1b[0m\x1b[40;95m${picWebp}\x1b[0m`);
@@ -291,7 +292,7 @@ async function ImageWatermark(picConfigP = []) {
       // JPG
       if (!IsEqual(picJpg)) {
         // read to original file to the buffer
-        const stream = route.get(filePath);
+        const stream = hexo.route.get(filePath);
         const arr = [];
         stream.on("data", (chunk) => arr.push(chunk));
         console.log(`\x1b[40;94mINFO\x1b[0m  \x1b[40;94mGenerated Image Process: \x1b[0m\x1b[40;95m${picJpg}\x1b[0m`);
@@ -307,45 +308,44 @@ async function ImageWatermark(picConfigP = []) {
         }
       }
 
-      /*
-      ensure the files has been generated and then read into the stream
-      then set to the buffer
-      */
-      
-      if (!hexo.route.list().includes(picJpg.replace("/", ""))) {
-        hexo.route.set(picJpg.replace("/", ""), GetImageCache(picJpg));
-      }
-
-      if (!hexo.route.list().includes(picWebp.replace("/", ""))) {
-        hexo.route.set(picWebp.replace("/", ""), GetImageCache(picWebp));
-      }
-
       if (/^(g)/.test(hexo.env.cmd)) {
-        // only copy files when the image 
+        // only copy files when the image
         if (!fs.pathExistsSync("public" + picJpg)) {
           fs.copySync("image" + picJpg, "public" + picJpg);
         }
-
         if (!fs.pathExistsSync("public" + picWebp)) {
           fs.copySync("image" + picWebp, "public" + picWebp);
+        }
+      } else {
+        if (!hexo.route.list().includes(picWebp.replace("/", ""))) {
+          hexo.route.set(picWebp.replace("/", ""), () => fs.createReadStream("./image" + picWebp));
+        }
+        if (!hexo.route.list().includes(picJpg.replace("/", ""))) {
+          hexo.route.set(picJpg.replace("/", ""), () => fs.createReadStream("./image" + picJpg));
         }
       }
     };
 
     if (picConfigP) {
       localPicPro(picConfigP);
-    } else {
+      if (IsEqual(picConfigP[1])) { plist.push(picConfigP[1]); }
+      if (IsEqual(picConfigP[2])) { plist.push(picConfigP[2]); }
+    } else if (picList.length) {
       picList.forEach((picConfig) => {
         localPicPro(picConfig);
+        if (IsEqual(picConfig[1])) { plist.push(picConfig[1]); }
+        if (IsEqual(picConfig[2])) { plist.push(picConfig[2]); }
       });
     }
 
     hexo.locals.set("picList", []);
   } catch (err) {
+    console.log(`\x1b[40;91m${err}\x1b[0m`);
     console.log(err);
   }
 }
 
+hexo.locals.set("enhancePicList", []);
 hexo.locals.set("picList", []);
 
 hexo.extend.tag.register("webp", function (args) {
@@ -364,3 +364,16 @@ hexo.extend.helper.register("webp_helper", function (args) {
 });
 
 hexo.extend.filter.register("after_generate", ImageWatermark);
+
+hexo.extend.generator.register("file_to_route", () => {
+  // set the enhanced image to route
+  var picList = hexo.locals.get("enhancePicList");
+  return picList.map((el) => {
+    return {
+      path: el.replace("/", ""),
+      data: () => {
+        return fs.createReadStream("./image" + el);
+      }
+    };
+  });
+});
