@@ -132,9 +132,14 @@ Usage template:\
 
     - --desc|[text]|
         This option allow you to add image description.
+        ```md
         {% webp /post_image/abc.JPG --desc|This is a long long description for my testing image. However, I think this is not long enough so I extended it a little bit lonnnnnnnnnnnnnnnger.夾雜着繁體中文。日本語もある。she's so damn pretty! he's going to sleep.| %}
+        ```
         Remarks: Due to the implementation of HEXO tag works, double quotes and quote pairs are not working.
-        For example: {% webp /post_image/abc.JPG --desc|"this is" 'wow'| %}
+        For example:
+        ```md
+        {% webp /post_image/abc.JPG --desc|"this is" 'wow'| %}
+        ```
         Reference to notes for page template to display description.
 
 ## Priority of the options
