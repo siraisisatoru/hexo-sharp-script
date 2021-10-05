@@ -130,6 +130,13 @@ Usage template:\
         {% webp /post_image/abc.JPG --resize300:200 %}
         ```
 
+    - --desc|[text]|
+        This option allow you to add image description.
+        {% webp /post_image/abc.JPG --desc|This is a long long description for my testing image. However, I think this is not long enough so I extended it a little bit lonnnnnnnnnnnnnnnger.夾雜着繁體中文。日本語もある。she's so damn pretty! he's going to sleep.| %}
+        Remarks: Due to the implementation of HEXO tag works, double quotes and quote pairs are not working.
+        For example: {% webp /post_image/abc.JPG --desc|"this is" 'wow'| %}
+        Reference to notes for page template to display description.
+
 ## Priority of the options
 Notice that there may have billions of combination of options. There are fundamental priority design.
 
@@ -140,6 +147,14 @@ Notice that there may have billions of combination of options. There are fundame
 - Images will only be process if and only if `webp` tag is used in .md file or `webp_helper` tag used in .ejs file which is different from most of other hexo image plugins.
 - The processed images will be stored in `image` folder under the root directory of the project.
 - I am using [orange theme](https://github.com/zchengsite/hexo-theme-oranges) for HEXO blog development. The fancybox function is implemented by using Jquery to add a perent `a` tag with `data-fancybox='gallery'` and corresponding `href` to the image. When looping all elements, a filter `if ($(this).hasClass("nofancybox")) {return;}` can be used to escape the `a` tag addition.
+- To route the image description to fancybox, the following code can be added when creating the `a` tag.
+```js
+if ($(this).attr("data-caption")){
+    $(element).attr("data-caption", $(this).attr("data-caption"));
+    $(this).removeAttr("data-caption")
+}
+```
+Where the `element` is the new `a` tag created. And `this` is the `img` tag that after filtered pretend to be covered by `a` tag.
 
 ## Use in ejs template
 It is the same usage as the use in markdown. But the tag curly bracket to square bracket.

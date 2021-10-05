@@ -54,7 +54,7 @@ function modifyInbound(imageHW, recXYHW, type) {
 
 async function getimagFunc(args, preArgs) {
   // args :
-  // link <--refmaxwidth[co-responding ratio]> <--watermkwidth[co-responding ratio]> <--crop[x]x[y]-[width]x[height]> <--mo[x]x[y]-[width]x[height]> <--ratio[width]:[height]> <--resize[width]x[height]>
+  // link <--refmaxwidth[co-responding ratio]> <--crop[x]x[y]-[width]x[height]> <--watermkwidth[co-responding ratio]> <--mo[x]x[y]-[width]x[height]> [ratio] [ratio width height] [width height]
   var webpSettings = {};
 
   const originPic = args[0];
@@ -140,7 +140,9 @@ process the image with assigned image functions
 
 function picProcess(args) {
   // args :
-  // [original] [fancybox] [nwatermk] [ncompress] link <--refmaxwidth[co-responding ratio]> <--watermkwidth[co-responding ratio]> <--crop[x]x[y]-[width]x[height]> <--mo[x]x[y]-[width]x[height]> <--ratio[width]:[height]> <--resize[width]x[height]>
+  // [original] [fancybox] [nwatermk] [ncompress] link <--refmaxwidth[co-responding ratio]> <--watermkwidth[co-responding ratio]> <--crop[x]x[y]-[width]x[height]> <--mo[x]x[y]-[width]x[height]> [ratio] [width height]
+  let caption;
+  [caption, args] = findCaption(args);
 
   let preArgs = { fancybox: false, nwatermk: false, original: false, ncompress: false };
   let argsPar;
@@ -228,28 +230,44 @@ function picProcess(args) {
     html = `<picture><source type="image/webp" srcset=${finalP.replace("./source", "")}>
      <img src=${finalPjpg.replace("./source", "")} class="nofancybox"> </picture>`;
   } else {
-    html = `<img src=${finalPjpg.replace("./source", "")} class="fancybox">`;
+    html = `<img src=${finalPjpg.replace("./source", "")} class="fancybox"`;
+    if (caption) {
+      html += ` data-caption="${caption}"`;
+    }
+    html += `>`;
   }
   const picConfig = [args, finalP, finalPjpg, preArgs];
 
   return [html, picConfig];
 }
 
-function filterDuplicateLists(picList) {
+function findCaption(args) {
+  let argsStr = args.join(" ");
+  let caption = "";
+  let nargs = [...args];
+  if (/--desc\|(.*)\|/i.test(argsStr)) {
+    // there has a description attribute
+    caption = argsStr.match(/--desc\|(.*)\|/i)[1];
+    argsStr = argsStr.replace(/ --desc\|(.*)\|/i, "");
+    nargs = argsStr.split(" ");
+  }
+  return [caption, nargs];
+}
 
+function filterDuplicateLists(picList) {
   var map = {};
   for (var i = 0; i < picList.length; i++) {
     var element = picList[i][1]; // arr[i] is the element in the array at position i
-    (map[element] || (map[element] = [])).push(i)
+    (map[element] || (map[element] = [])).push(i);
   }
   for (var element in map) {
     if (map[element].length > 1) {
-      for(var i = map[element].length -1 ; i > 0 ; i--){
+      for (var i = map[element].length - 1; i > 0; i--) {
         picList[map[element][i]] = [];
       }
     }
   }
-  var picList = picList.filter(function(item){
+  var picList = picList.filter(function (item) {
     return item.length !== 0;
   });
 
