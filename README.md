@@ -173,6 +173,27 @@ In ejs template:
 <%- webp_helper /post_image/abc.JPG --resize300:200 %>
 ```
 
+Additional method to add caption:
+In some cases, you may need to add caption from HEXO data files. 
+Example: You have a data file named `abcData.yml` placed in `source/_data` folder.
+Then your caption and image information stored as following:
+``` yml
+image:
+- fancybox /abc/IMG_0001.JPG
+- fancybox /abc/IMG_0002.JPG
+caption:
+- hello world
+- testing caption
+```
+In your ejs template:
+```md
+<%- webp_helper `${abcData.image[i]}` , `${abcData.caption[i]}` %>
+```
+Here assuming you have same number of images and captions. The checking can be easily implemented by yourself.
+
 ## Right of usage
 The watermark library is using LGPL-3.0 licence for their project.
 MIT license is applied for this repository.
+
+## Demonstration
+You can browse (my blog)[https://siraisinotes.web.app/en/2021/09/12/image-lib-v1/] for demonstrations.

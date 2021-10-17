@@ -374,8 +374,11 @@ hexo.extend.tag.register("webp", function (args) {
   return html;
 });
 
-hexo.extend.helper.register("webp_helper", function (args) {
+hexo.extend.helper.register("webp_helper", function (args, capt) {
   args = args.split(" ");
+  if (capt) {
+    args.push("--desc|" + capt + "|");
+  }
   const [html, picConfig] = picProcess(args);
   ImageWatermark(picConfig);
   return html;
