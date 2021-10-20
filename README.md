@@ -196,4 +196,4 @@ The watermark library is using LGPL-3.0 licence for their project.
 MIT license is applied for this repository.
 
 ## Demonstration
-You can browse (my blog)[https://siraisinotes.web.app/en/2021/09/12/image-lib-v1/] for demonstrations.
+You can browse [my blog](https://siraisinotes.web.app/en/2021/09/12/image-lib-v1/) for demonstrations.
